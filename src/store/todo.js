@@ -1,17 +1,20 @@
-import { observable, decorate } from 'mobx';
+import { createContext } from 'react'
+import { observable, decorate, action, computed } from 'mobx';
 
 
 class TodoList {
-  id = Math.rendom();
-  title = ''
-  finished = false
+  @observable title = ''
+  @observable finished = false
+  @computed 
   get myTitle() {
     return this.title + '!!!'
   }
+
+  @action
+  setTitle(title){
+    console.log(111111111111, title)
+    this.title = title;
+  }
 }
 
-
-decorate(Todo, {
-  title: observable,
-  finished: observable
-})
+export const todo = new TodoList()
