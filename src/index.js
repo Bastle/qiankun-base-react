@@ -8,6 +8,7 @@ import { registerMicroApps, start} from 'qiankun'
 import {BrowserRouter} from 'react-router-dom';
 
 import { observable, action, computed } from 'mobx';
+import actions from './shared/actions';
 
 
 // const store = new TodoList()
@@ -44,14 +45,16 @@ ReactDOM.render(
 );
 
 
-
 registerMicroApps(
   [
     {
       name: 'vue',
       entry: '//localhost:10000/',
       container: '#vue',
-      activeRule: '/vue'
+      activeRule: '/vue',
+      props: {
+        actions
+      }
     },
     {
       name: 'react',
@@ -59,7 +62,7 @@ registerMicroApps(
       container: '#react',
       activeRule: '/react',
       props: {
-        store: {todo},
+        actions
       }
     }
   ], {

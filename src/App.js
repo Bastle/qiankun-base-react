@@ -1,8 +1,8 @@
-import React, {useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import './App.css';
 import { observer, MobXProviderContext } from 'mobx-react'
-import {Link, useLocation, useHistory, useParams, useRouteMatch} from 'react-router-dom'
-
+import { Link } from 'react-router-dom'
+import actions from './shared/actions';
 
 
 
@@ -11,21 +11,35 @@ const useStores = () => {
 }
 
 const App = observer(() => {
+  const [date, setDate] = useState('loading')
   const ctx = useStores()
-  console.log('useLocation: ', useLocation());
-  console.log('useHistory: ', useHistory());
-  console.log('useParams(): ', useParams());
-  console.log('useRouteMatch: ', useRouteMatch());
-  console.log('ctx: ', ctx.store.todo.count);
   const add = ctx.store.todo.addCount
+  const login = async () =>{ 
+    const res = await new Promise((resolve, reject) => {
+      const date = new Date()
+      setTimeout(() =>{
+        console.log(date)
+        console.log(new Date())
+        resolve(date.toString())
+      }, 1000)
+    })
+    actions.setGlobalState({date: res})
+  }
+  useEffect(() => {
+    actions.onGlobalStateChange((state, prevState) => {
+      console.log('主应用观察者 state: ', state);
+      console.log('主应用观察者 prevState: ', prevState);
+      setDate(state.date || '--')
+    })
+  }, [])
   return (
     <div className="App">
       <header className="App-header">
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <Link to={{path: '/react', state: {a:1}}}>react</Link>
-        <Link to='/vue'>vue</Link>
+        <Link to='/react/about'>react</Link>
+        <Link to='/vue/about'>vue</Link>
         <a
           className="App-link"
           href="https://reactjs.org"
@@ -36,14 +50,15 @@ const App = observer(() => {
           {ctx.store.todo.count}
           {ctx.store.todo.finished ? 'hahaha' : 'lalala'}
         </a>
-        
         <button onClick={() => {
-          console.log(123)
-          // ctx.store.count
-          // ctx.store.todo.addCount()
           add()
-          // console.log(ctx.myTitle)
         }}>修改title</button>
+        <button onClick={() => {
+          login()
+        }}>login</button>
+        <p>
+          {date}
+        </p>
       </header>
     </div>
   )
